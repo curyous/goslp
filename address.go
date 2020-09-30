@@ -76,7 +76,7 @@ type Address interface {
 // When the address does not encode the network, such as in the case of a raw
 // public key, the address will be associated with the passed defaultNet.
 func decodeAddress(addr string, defaultNet *chaincfg.Params) (Address, error) {
-	pre := defaultNet.SlpAddressPrefix
+	pre := SlpAddressPrefix
 	if len(addr) < len(pre)+2 {
 		return nil, errors.New("invalid length address")
 	}
@@ -214,7 +214,7 @@ func newAddressPubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHa
 		return nil, errors.New("pkHash must be 20 bytes")
 	}
 
-	addr := &AddressPubKeyHash{prefix: net.SlpAddressPrefix}
+	addr := &AddressPubKeyHash{prefix: SlpAddressPrefix}
 	copy(addr.hash[:], pkHash)
 	return addr, nil
 }
@@ -234,7 +234,7 @@ func (a *AddressPubKeyHash) ScriptAddress() []byte {
 // IsForNet returns whether or not the pay-to-pubkey-hash address is associated
 // with the passed bitcoin cash network.
 func (a *AddressPubKeyHash) IsForNet(net *chaincfg.Params) bool {
-	return a.prefix == net.SlpAddressPrefix
+	return a.prefix == SlpAddressPrefix
 }
 
 // String returns a human-readable string for the pay-to-pubkey-hash address.
@@ -281,7 +281,7 @@ func newAddressScriptHashFromHash(scriptHash []byte, net *chaincfg.Params) (*Add
 		return nil, errors.New("scriptHash must be 20 bytes")
 	}
 
-	addr := &AddressScriptHash{prefix: net.SlpAddressPrefix}
+	addr := &AddressScriptHash{prefix: SlpAddressPrefix}
 	copy(addr.hash[:], scriptHash)
 	return addr, nil
 }
@@ -301,7 +301,7 @@ func (a *AddressScriptHash) ScriptAddress() []byte {
 // IsForNet returns whether or not the pay-to-script-hash address is associated
 // with the passed bitcoin cash network.
 func (a *AddressScriptHash) IsForNet(net *chaincfg.Params) bool {
-	return net.SlpAddressPrefix == a.prefix
+	return SlpAddressPrefix == a.prefix
 }
 
 // String returns a human-readable string for the pay-to-script-hash address.
@@ -565,8 +565,7 @@ func (a *AddressPubKey) SetFormat(pkFormat PubKeyFormat) {
 // differs with the format.  At the time of this writing, most Bitcoin addresses
 // are pay-to-pubkey-hash constructed from the uncompressed public key.
 func (a *AddressPubKey) AddressPubKeyHash() *AddressPubKeyHash {
-	params := paramsFromNetID(a.pubKeyHashID)
-	addr := &AddressPubKeyHash{prefix: params.SlpAddressPrefix}
+	addr := &AddressPubKeyHash{prefix: SlpAddressPrefix}
 	copy(addr.hash[:], bchutil.Hash160(a.serialize()))
 	return addr
 }
